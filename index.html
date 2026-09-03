@@ -997,7 +997,7 @@
       <button class="tabbtn" data-tab="positions">Positions</button>
       <button class="tabbtn" data-tab="watchlist">Watchlist</button>
       <button class="tabbtn" data-tab="investable">Investable</button>
-      <button class="tabbtn" data-tab="realcapital">Real Capital</button>
+      <button class="tabbtn" data-tab="forwardtest">Forward Test</button>
       <button class="tabbtn" data-tab="allscan">All Scanned</button>
       <button class="tabbtn" data-tab="trackrecord">Track Record</button>
       <button class="tabbtn" data-tab="candlesignals">Candle Signals</button>
@@ -1344,55 +1344,54 @@
     </section>
   </div>
 
-  <!-- ================= REAL CAPITAL TAB ================= -->
+  <!-- ================= FORWARD TEST TAB ================= -->
 
-  <div class="tab-panel" data-panel="realcapital" hidden>
+  <div class="tab-panel" data-panel="forwardtest" hidden>
 
     <header class="top">
       <div>
-        <p class="brand-eyebrow"><span class="dot"></span>Real Money &middot; Manually Executed<span class="cursor"></span></p>
-        <h1>Real <span class="accent">Capital</span></h1>
-        <p class="brand-sub">The user's own real &#8377;2,00,000, started 2026-08-29. Every position here is a real fill placed at the broker and reported by hand -- this dashboard never sizes, selects, or places a trade on its own. Not investment advice.</p>
+        <p class="brand-eyebrow"><span class="dot"></span>Manually Reported &middot; No Live Feed<span class="cursor"></span></p>
+        <h1>Forward <span class="accent">Test</span></h1>
+        <p class="brand-sub">Strategies being forward-tested outside COIL's own Dhan/NSE pipeline &mdash; e.g. the "We Keep It Simple and Clean" trend-following setup (near-52wk-high strength, base/rectangle/trendline patterns, 10/21 EMA trail, ~70-90 day average hold), traded as gold CFD. No automated price feed exists for these instruments, so every entry and exit is reported by hand via <code class="mono">forward_test.py</code> &mdash; this tab never sizes, selects, or executes a trade on its own. Not investment advice.</p>
       </div>
     </header>
 
-    <section class="block" id="realcapital-empty-note-section" style="display:none;">
-      <h2>Real Capital</h2>
-      <p class="empty-note">No real fills logged yet &mdash; positions appear here once <code class="mono">real_capital.record_fill()</code> has been called for an actual trade.</p>
+    <section class="block" id="forwardtest-empty-note-section" style="display:none;">
+      <h2>Forward Test</h2>
+      <p class="empty-note">No forward-test trades logged yet &mdash; call <code class="mono">forward_test.open_trade()</code> to log the first one.</p>
     </section>
 
-    <section class="block" id="realcapital-table-section">
-      <h2>Real Capital</h2>
+    <section class="block" id="forwardtest-table-section">
+      <h2>Forward Test</h2>
 
       <div class="stat-row" style="margin-bottom: 20px;">
-        <div class="stat"><div class="num accent tab-nums" id="rc-stat-equity">&mdash;</div><div class="lbl">Equity</div></div>
-        <div class="stat"><div class="num tab-nums" id="rc-stat-cash">&mdash;</div><div class="lbl">Cash</div></div>
-        <div class="stat"><div class="num tab-nums" id="rc-stat-invested">&mdash;</div><div class="lbl">Invested</div></div>
-        <div class="stat"><div class="num tab-nums mono" id="rc-stat-daypnl">&mdash;</div><div class="lbl">Today's P&amp;L</div></div>
-        <div class="stat"><div class="num tab-nums mono" id="rc-stat-totalpnl">&mdash;</div><div class="lbl">Total Return</div></div>
+        <div class="stat"><div class="num accent tab-nums" id="ft-stat-open">&mdash;</div><div class="lbl">Open trades</div></div>
+        <div class="stat"><div class="num tab-nums" id="ft-stat-closed">&mdash;</div><div class="lbl">Closed trades</div></div>
+        <div class="stat"><div class="num tab-nums" id="ft-stat-winrate">&mdash;</div><div class="lbl">Win rate</div></div>
+        <div class="stat"><div class="num tab-nums mono" id="ft-stat-avgpnl">&mdash;</div><div class="lbl">Avg closed P&amp;L</div></div>
       </div>
 
       <div class="alloc-wrap">
+        <h2 style="margin-bottom:12px; font-size:15px;">Open</h2>
         <div class="alloc-table-wrap">
           <table class="alloc-table">
             <thead><tr>
-              <th>Symbol</th><th>Entered</th><th>Shares</th><th>Entry</th><th>Stop</th>
-              <th>Invested</th><th>Live</th><th>Day P&amp;L</th><th>Total P&amp;L</th>
+              <th>Symbol</th><th>Strategy</th><th>Dir</th><th>Entered</th><th>Entry</th><th>Stop</th><th>Target</th><th>Notes</th>
             </tr></thead>
-            <tbody id="rc-tbody"></tbody>
+            <tbody id="ft-open-tbody"></tbody>
           </table>
         </div>
-        <p class="alloc-foot" id="rc-foot"></p>
+        <p class="alloc-foot" id="ft-foot"></p>
       </div>
-      <div id="rc-closed-wrap" style="display:none; margin-top:24px;">
+      <div id="ft-closed-wrap" style="display:none; margin-top:24px;">
         <h2 style="margin-bottom:12px;">Closed</h2>
         <div class="alloc-wrap">
           <div class="alloc-table-wrap">
             <table class="alloc-table">
               <thead><tr>
-                <th>Symbol</th><th>Entry</th><th>Exit</th><th>Exit date</th><th>Shares</th><th>Realized P&amp;L</th>
+                <th>Symbol</th><th>Strategy</th><th>Dir</th><th>Entry</th><th>Exit</th><th>Exit date</th><th>P&amp;L</th>
               </tr></thead>
-              <tbody id="rc-closed-tbody"></tbody>
+              <tbody id="ft-closed-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -1479,7 +1478,7 @@ const CHART_DATA = {"MAHABANK": {"bars": [{"o": 65.69, "h": 66.12, "l": 64.2, "c
 const WATCHLIST = {"entries": [{"symbol": "ACMESOLAR", "date_added": "2026-08-01", "entry_price": 362.6, "sector_label": "NIFTY ENERGY", "eps_growth": 72.0, "rev_growth": 47.0, "rs_pct": 82.3, "current_price": 401.9, "pnl_pct": 10.84}, {"symbol": "AEGISLOG", "date_added": "2026-08-01", "entry_price": 1280.8, "sector_label": "NIFTY OIL AND GAS", "eps_growth": 46.0, "rev_growth": 52.0, "rs_pct": 95.1, "current_price": 1287.2, "pnl_pct": 0.5}, {"symbol": "ANANDRATHI", "date_added": "2026-08-01", "entry_price": 2073.7, "sector_label": "NIFTY FINSEREXBNK", "eps_growth": 71.0, "rev_growth": 52.0, "rs_pct": 92.7, "current_price": 2205.3, "pnl_pct": 6.35}, {"symbol": "ASTERDM", "date_added": "2026-08-01", "entry_price": 822.15, "sector_label": "NIFTY MIDSML HLTH", "eps_growth": 72.0, "rev_growth": 18.0, "rs_pct": 86.5, "current_price": 787, "pnl_pct": -4.28}, {"symbol": "CAPLIPOINT", "date_added": "2026-08-01", "entry_price": 2516.8, "sector_label": "NIFTY PHARMA", "eps_growth": 19.0, "rev_growth": 19.0, "rs_pct": 76.4, "current_price": 2845, "pnl_pct": 13.04}, {"symbol": "GLAND", "date_added": "2026-08-01", "entry_price": 2502.9, "sector_label": "NIFTY PHARMA", "eps_growth": 96.0, "rev_growth": 22.0, "rs_pct": 79.5, "current_price": 2907.9, "pnl_pct": 16.18}, {"symbol": "HSCL", "date_added": "2026-08-01", "entry_price": 750.65, "sector_label": "NIFTY COMMODITIES", "eps_growth": 25.0, "rev_growth": 28.0, "rs_pct": 89.4, "current_price": 662, "pnl_pct": -11.81}, {"symbol": "NUVAMA", "date_added": "2026-08-01", "entry_price": 1803.8, "sector_label": "NIFTY FINSEREXBNK", "eps_growth": 16.0, "rev_growth": 22.0, "rs_pct": 74.0, "current_price": 1839.2, "pnl_pct": 1.96}, {"symbol": "VIJAYA", "date_added": "2026-08-01", "entry_price": 1344.4, "sector_label": "NIFTY MIDSML HLTH", "eps_growth": 38.0, "rev_growth": 27.0, "rs_pct": 76.1, "current_price": 1505.5, "pnl_pct": 11.98}, {"symbol": "ABCAPITAL", "date_added": "2026-08-01", "entry_price": 404.3, "sector_label": "NIFTY FINSEREXBNK", "eps_growth": 39.0, "rev_growth": 31.0, "rs_pct": 90.9, "current_price": 402, "pnl_pct": -0.57}, {"symbol": "FEDERALBNK", "date_added": "2026-08-01", "entry_price": 358.85, "sector_label": "NIFTY PVT BANK", "eps_growth": 33.0, "rev_growth": 21.0, "rs_pct": 94.8, "current_price": 344.6, "pnl_pct": -3.97}, {"symbol": "LUPIN", "date_added": "2026-08-01", "entry_price": 2415, "sector_label": "NIFTY PHARMA", "eps_growth": 89.0, "rev_growth": 32.0, "rs_pct": 80.3, "current_price": 2132, "pnl_pct": -11.72}, {"symbol": "AVALON", "date_added": "2026-08-03", "entry_price": 1751.8, "sector_label": "NIFTYIT", "eps_growth": 69.0, "rev_growth": 40.0, "rs_pct": 97.7, "current_price": 2248.6, "pnl_pct": 28.36}, {"symbol": "AZAD", "date_added": "2026-08-03", "entry_price": 2306.8, "sector_label": "NIFTYINFRA", "eps_growth": 34.0, "rev_growth": 27.0, "rs_pct": 88.1, "current_price": 2766.9, "pnl_pct": 19.95}, {"symbol": "IMFA", "date_added": "2026-08-03", "entry_price": 1492, "sector_label": "NIFTY METAL", "eps_growth": 118.0, "rev_growth": 35.0, "rs_pct": 96.4, "current_price": 1281.7, "pnl_pct": -14.1}, {"symbol": "JAMNAAUTO", "date_added": "2026-08-03", "entry_price": 140.86, "sector_label": "NIFTY AUTO", "eps_growth": 73.0, "rev_growth": 32.0, "rs_pct": 84.9, "current_price": 122.04, "pnl_pct": -13.36}, {"symbol": "KTKBANK", "date_added": "2026-08-03", "entry_price": 289.45, "sector_label": "NIFTY PVT BANK", "eps_growth": 43.0, "rev_growth": 26.0, "rs_pct": 90.1, "current_price": 339.75, "pnl_pct": 17.38}, {"symbol": "LLOYDSENGG", "date_added": "2026-08-03", "entry_price": 91.84, "sector_label": "NIFTYINFRA", "eps_growth": 112.0, "rev_growth": 113.0, "rs_pct": 73.9, "current_price": 84.95, "pnl_pct": -7.5}, {"symbol": "PRIVISCL", "date_added": "2026-08-03", "entry_price": 3597, "sector_label": "NIFTY COMMODITIES", "eps_growth": 36.0, "rev_growth": 19.0, "rs_pct": 89.1, "current_price": 3373.5, "pnl_pct": -6.21}, {"symbol": "SANSERA", "date_added": "2026-08-03", "entry_price": 3452.7, "sector_label": "NIFTY AUTO", "eps_growth": 104.0, "rev_growth": 28.0, "rs_pct": 98.7, "current_price": 3789.6, "pnl_pct": 9.76}, {"symbol": "CRAFTSMAN", "date_added": "2026-08-05", "entry_price": 10175.0, "sector_label": "NIFTY AUTO", "eps_growth": 113.3, "rev_growth": 36.3, "rs_pct": 91.4, "current_price": 11220, "pnl_pct": 10.27}, {"symbol": "AUBANK", "date_added": "2026-08-05", "entry_price": 1059.0, "sector_label": "NIFTY PVT BANK", "eps_growth": 35.1, "rev_growth": 29.8, "rs_pct": 87.8, "current_price": 1072, "pnl_pct": 1.23}, {"symbol": "AJANTPHARM", "date_added": "2026-08-05", "entry_price": 3525.1, "sector_label": "NIFTY PHARMA", "eps_growth": 30.8, "rev_growth": 24.8, "rs_pct": 77.1, "current_price": 3521.1, "pnl_pct": -0.11}, {"symbol": "ASTRAMICRO", "date_added": "2026-08-05", "entry_price": 1835.4, "sector_label": "NIFTYIT", "eps_growth": 43.9, "rev_growth": 19.7, "rs_pct": 95.3, "current_price": 1665.1, "pnl_pct": -9.28}, {"symbol": "PARAS", "date_added": "2026-08-05", "entry_price": 1300.3, "sector_label": "NIFTYINFRA", "eps_growth": 74.6, "rev_growth": 57.9, "rs_pct": 94.5, "current_price": 1411.5, "pnl_pct": 8.55}, {"symbol": "SKYGOLD", "date_added": "2026-08-05", "entry_price": 675.5, "sector_label": "NIFTY CONSUMPTION", "eps_growth": 111.9, "rev_growth": 80.6, "rs_pct": 97.7, "current_price": 742, "pnl_pct": 9.84}, {"symbol": "JAYNECOIND", "date_added": "2026-08-13", "entry_price": 90.67, "sector_label": "NIFTY METAL", "eps_growth": 108.3, "rev_growth": 27.7, "rs_pct": 90.5, "current_price": 98.68, "pnl_pct": 8.83}, {"symbol": "KARURVYSYA", "date_added": "2026-08-15", "entry_price": 331.75, "sector_label": "NIFTY PVT BANK", "eps_growth": 45.0, "rev_growth": 26.0, "rs_pct": 86.8, "current_price": 350, "pnl_pct": 5.5}, {"symbol": "HEG", "date_added": "2026-08-18", "entry_price": 698.3, "sector_label": "NIFTYINFRA", "eps_growth": 16.8, "rev_growth": 10.4, "rs_pct": 78.8, "current_price": 707.45, "pnl_pct": 1.31}, {"symbol": "TMB", "date_added": "2026-08-18", "entry_price": 843.7, "sector_label": "NIFTY PVT BANK", "eps_growth": 35.0, "rev_growth": 18.3, "rs_pct": 95.1, "current_price": 942.45, "pnl_pct": 11.7}, {"symbol": "RADICO", "date_added": "2026-08-20", "entry_price": 4696.0, "sector_label": "NIFTY FMCG", "eps_growth": 62.1, "rev_growth": 19.5, "rs_pct": 89.5, "current_price": 4559, "pnl_pct": -2.92}, {"symbol": "DCBBANK", "date_added": "2026-08-21", "entry_price": 188.61, "sector_label": "NIFTY PVT BANK", "eps_growth": 32.4, "rev_growth": 17.4, "rs_pct": 87.1, "current_price": 222.2, "pnl_pct": 17.81}, {"symbol": "MSTCLTD", "date_added": "2026-08-26", "entry_price": 727.95, "sector_label": "NIFTYINFRA", "eps_growth": 37.6, "rev_growth": 21.7, "rs_pct": 88.0, "current_price": 744.25, "pnl_pct": 2.24}, {"symbol": "MAHABANK", "date_added": "2026-08-27", "entry_price": 85.6, "sector_label": "NIFTY PVT BANK", "eps_growth": 34.2, "rev_growth": 21.8, "rs_pct": 87.5, "current_price": 86.32, "pnl_pct": 0.84}, {"symbol": "SHAILY", "date_added": "2026-09-01", "entry_price": 3272.3, "sector_label": "NIFTY COMMODITIES", "eps_growth": 16.7, "rev_growth": 13.8, "rs_pct": 86.5, "current_price": 3267.1, "pnl_pct": -0.16}, {"symbol": "GABRIEL", "date_added": "2026-09-02", "entry_price": 1426.3, "sector_label": "NIFTY AUTO", "eps_growth": 40.6, "rev_growth": 29.8, "rs_pct": 73.5, "current_price": 1345.8, "pnl_pct": -5.64}]};
 const CANDLE_SIGNALS = {"entries": [{"symbol": "SBIN", "signal_date": "2026-08-27", "pattern": "engulfing", "direction": "short", "signal_close": 1042.9, "stop": 1054.4, "current_price": 1023.4, "pnl_pct": 1.87}, {"symbol": "BAJFINANCE", "signal_date": "2026-08-27", "pattern": "engulfing", "direction": "short", "signal_close": 1083.0, "stop": 1107.0, "current_price": 1049, "pnl_pct": 3.14}, {"symbol": "AXISBANK", "signal_date": "2026-08-28", "pattern": "engulfing", "direction": "long", "signal_close": 1265.0, "stop": 1248.2, "current_price": 1267, "pnl_pct": 0.16}, {"symbol": "HDFCBANK", "signal_date": "2026-09-01", "pattern": "engulfing", "direction": "short", "signal_close": 709.0, "stop": 739.75, "current_price": 706.65, "pnl_pct": 0.33}, {"symbol": "ICICIBANK", "signal_date": "2026-09-01", "pattern": "engulfing", "direction": "long", "signal_close": 1454.0, "stop": 1419.0, "current_price": 1430, "pnl_pct": -1.65}, {"symbol": "KOTAKBANK", "signal_date": "2026-09-01", "pattern": "shooting_star", "direction": "short", "signal_close": 419.4, "stop": 425.05, "current_price": 421.15, "pnl_pct": -0.42}, {"symbol": "LT", "signal_date": "2026-09-01", "pattern": "hammer", "direction": "long", "signal_close": 4044.9, "stop": 3976.0, "current_price": 3975, "pnl_pct": -1.73}, {"symbol": "MARUTI", "signal_date": "2026-09-01", "pattern": "engulfing", "direction": "long", "signal_close": 13547.0, "stop": 13268.0, "current_price": 12857, "pnl_pct": -5.09}, {"symbol": "SUNPHARMA", "signal_date": "2026-09-01", "pattern": "engulfing", "direction": "long", "signal_close": 1984.8, "stop": 1905.0, "current_price": 1916, "pnl_pct": -3.47}]};
 const INVESTABLE = {"entries": [{"symbol": "DCBBANK", "date_added": "2026-08-21", "entry_price": 188.61, "stop": 181.06, "stop_pct": 4.0, "recorded_at": "2026-08-21 23:14", "sector_label": "NIFTY PVT BANK", "eps_growth": 32.4, "rev_growth": 17.4, "rs_pct": 87.1, "current_price": 222.2, "pnl_pct": 17.81}, {"symbol": "MAHABANK", "date_added": "2026-08-27", "entry_price": 85.6, "stop": 75.66, "stop_pct": 11.61, "recorded_at": "2026-08-27 20:15", "sector_label": "NIFTY PVT BANK", "eps_growth": 34.2, "rev_growth": 21.8, "rs_pct": 87.5, "current_price": 86.32, "pnl_pct": 0.84}, {"symbol": "RADICO", "date_added": "2026-09-02", "entry_price": 4474.3, "stop": 3958.12, "stop_pct": 11.54, "recorded_at": "2026-09-02 16:43", "sector_label": "NIFTY FMCG", "eps_growth": 62.1, "rev_growth": 19.5, "rs_pct": 86.5, "current_price": 4559, "pnl_pct": 1.89}]};
-const REAL_CAPITAL = null;
+const FORWARD_TEST = null;
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -2130,18 +2129,31 @@ function renderFresh() {
   }
 }
 
-// Real Capital -- the user's own real Rs 2,00,000, manually executed at their broker (see
-// real_capital.py). Deliberately simpler than renderFresh() above: no cap/sector donuts (real
-// fills aren't classified by cap-size/sector the way the mechanical Fresh sleeve's picks are),
-// no weight bars or 2:1 targets (position sizes here come from a real, possibly ad-hoc decision,
-// not a risk-parity formula applied to a whole batch at once).
-function renderRealCapital() {
-  const emptySection = document.getElementById("realcapital-empty-note-section");
-  const tableSection = document.getElementById("realcapital-table-section");
+// Forward Test -- strategies traded outside COIL's own Dhan/NSE pipeline (e.g. the gold CFD
+// trend-following setup), manually reported entry AND exit via forward_test.py. No live price
+// feed exists for these instruments, so unlike every other tab here, nothing is reprised at
+// build time -- pnl_pct on a closed trade is whatever forward_test.close_trade() computed when
+// it was reported. Symbols aren't NSE tickers, so no symLink()/chart-click here (that would
+// build a wrong TradingView NSE: link) -- plain text only.
+// Plain numeric formatter (no ₹) -- forward-tested instruments (e.g. gold CFD) aren't
+// necessarily rupee-denominated, unlike everything else on this dashboard.
+function fmtNum(v) { return v != null ? v.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"; }
 
-  const hasOpen = REAL_CAPITAL && REAL_CAPITAL.positions && REAL_CAPITAL.positions.length;
-  const hasClosed = REAL_CAPITAL && REAL_CAPITAL.closed_positions && REAL_CAPITAL.closed_positions.length;
-  if (!hasOpen && !hasClosed) {
+// forward_test.py logs full ISO timestamps ("2026-09-03T14:30"), not the bare YYYY-MM-DD dates
+// fmtDate() expects -- new Date() parses a full ISO string directly, no "T00:00:00" append.
+function fmtFTDateTime(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  return d.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function renderForwardTest() {
+  const emptySection = document.getElementById("forwardtest-empty-note-section");
+  const tableSection = document.getElementById("forwardtest-table-section");
+
+  const trades = (FORWARD_TEST && FORWARD_TEST.trades) || [];
+  if (!trades.length) {
     emptySection.style.display = "";
     tableSection.style.display = "none";
     return;
@@ -2149,81 +2161,64 @@ function renderRealCapital() {
   emptySection.style.display = "none";
   tableSection.style.display = "";
 
-  animateCount(document.getElementById("rc-stat-equity"), REAL_CAPITAL.equity,
-    (v) => `₹${Math.round(v).toLocaleString("en-IN")}`);
-  animateCount(document.getElementById("rc-stat-cash"), REAL_CAPITAL.cash,
-    (v) => `₹${Math.round(v).toLocaleString("en-IN")}`);
-  const investedNow = (REAL_CAPITAL.positions || []).reduce((sum, p) => sum + p.invested, 0);
-  animateCount(document.getElementById("rc-stat-invested"), investedNow,
-    (v) => `₹${Math.round(v).toLocaleString("en-IN")}`);
+  const open = trades.filter(t => t.status === "open");
+  const closed = trades.filter(t => t.status === "closed");
 
-  const totalPnlStat = document.getElementById("rc-stat-totalpnl");
-  if (REAL_CAPITAL.total_return_pct != null) {
-    totalPnlStat.style.color = REAL_CAPITAL.total_return_pct >= 0 ? "var(--good)" : "var(--bad)";
-    animateCount(totalPnlStat, REAL_CAPITAL.total_return_pct, (v) => `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`);
+  document.getElementById("ft-stat-open").textContent = open.length;
+  document.getElementById("ft-stat-closed").textContent = closed.length;
+
+  const winRateStat = document.getElementById("ft-stat-winrate");
+  if (closed.length) {
+    const wins = closed.filter(t => t.pnl_pct >= 0).length;
+    winRateStat.textContent = `${Math.round(wins / closed.length * 100)}%`;
   } else {
-    totalPnlStat.textContent = "—";
-    totalPnlStat.style.color = "";
+    winRateStat.textContent = "—";
   }
 
-  const withDay = (REAL_CAPITAL.positions || []).filter(p => p.day_pnl_amount != null);
-  const dayTotal = withDay.reduce((sum, p) => sum + p.day_pnl_amount, 0);
-  const dayStat = document.getElementById("rc-stat-daypnl");
-  if (withDay.length) {
-    dayStat.style.color = dayTotal >= 0 ? "var(--good)" : "var(--bad)";
-    animateCount(dayStat, dayTotal, (v) => `${v >= 0 ? "+" : "-"}₹${Math.round(Math.abs(v)).toLocaleString("en-IN")}`);
+  const avgPnlStat = document.getElementById("ft-stat-avgpnl");
+  if (closed.length) {
+    const avg = closed.reduce((sum, t) => sum + t.pnl_pct, 0) / closed.length;
+    avgPnlStat.style.color = avg >= 0 ? "var(--good)" : "var(--bad)";
+    avgPnlStat.textContent = `${avg >= 0 ? "+" : ""}${avg.toFixed(2)}%`;
   } else {
-    dayStat.textContent = "—";
-    dayStat.style.color = "";
+    avgPnlStat.textContent = "—";
+    avgPnlStat.style.color = "";
   }
 
-  document.getElementById("rc-tbody").innerHTML = (REAL_CAPITAL.positions || []).map(p => {
-    const hasLive = p.current_price != null;
-    const totalCls = hasLive ? (p.pnl_pct >= 0 ? "pos" : "neg") : "";
-    const totalText = hasLive ? `${p.pnl_pct >= 0 ? "+" : ""}${p.pnl_pct}%` : "—";
-    const totalRsText = hasLive && p.pnl_amount != null ? fmtPnlRs(p.pnl_amount) : "";
-    const hasDay = p.day_pnl_pct != null;
-    const dayCls = hasDay ? (p.day_pnl_pct >= 0 ? "pos" : "neg") : "";
-    const dayText = hasDay ? `${p.day_pnl_pct >= 0 ? "+" : ""}${p.day_pnl_pct}%` : "—";
-    const dayRsText = hasDay && p.day_pnl_amount != null ? fmtPnlRs(p.day_pnl_amount) : "";
-    const liveText = hasLive ? fmtRs(p.current_price) : "—";
-    const statusChip = hasLive ? `<span class="t-status ${p.status}">${p.status === "STOPPED_OUT" ? "Stopped" : "Open"}</span>` : "";
-    const enteredTitle = `Real fill reported by the user, entry ${fmtDate(p.entry_date)}`
-      + (p.recorded_at ? ` -- logged at ${p.recorded_at}` : "");
-    return `<tr data-symbol="${p.symbol}">
-      <td class="t-sym">${symLink(p.symbol, p.symbol)}</td>
-      <td class="mono" style="font-size:12px" title="${enteredTitle}">${fmtDate(p.entry_date)}</td>
-      <td>${p.shares}</td>
-      <td title="${enteredTitle}">${fmtRs(p.entry)}</td>
-      <td style="color:var(--bad)">${fmtRs(p.stop)}</td>
-      <td>${fmtRs(p.invested)}</td>
-      <td>${liveText} ${statusChip}</td>
-      <td class="t-pnl ${dayCls}">${dayText}${dayRsText ? `<div class="t-pnl-rs">${dayRsText}</div>` : ""}</td>
-      <td class="t-pnl ${totalCls}">${totalText}${totalRsText ? `<div class="t-pnl-rs">${totalRsText}</div>` : ""}</td>
+  const dirChip = (dir) => `<span class="t-status ${dir === "long" ? "OPEN" : "STOPPED_OUT"}">${dir === "long" ? "Long" : "Short"}</span>`;
+
+  document.getElementById("ft-open-tbody").innerHTML = open.slice().reverse().map(t => {
+    return `<tr>
+      <td class="t-sym">${t.symbol}</td>
+      <td>${t.strategy}</td>
+      <td>${dirChip(t.direction)}</td>
+      <td class="mono" style="font-size:12px">${fmtFTDateTime(t.entry_date)}</td>
+      <td>${fmtNum(t.entry_price)}</td>
+      <td style="color:var(--bad)">${fmtNum(t.stop)}</td>
+      <td>${t.target != null ? fmtNum(t.target) : "—"}</td>
+      <td style="font-size:12px; color:var(--muted)">${t.notes || "—"}</td>
     </tr>`;
   }).join("");
-  staggerIndex(document.getElementById("rc-tbody"));
+  staggerIndex(document.getElementById("ft-open-tbody"));
 
-  document.getElementById("rc-foot").textContent =
-    `Cash available: ₹${(REAL_CAPITAL.cash || 0).toLocaleString("en-IN", {maximumFractionDigits:0})}. `
-    + `Realized P&L (closed positions): ${REAL_CAPITAL.realized_pnl >= 0 ? "+" : "-"}`
-    + `₹${Math.abs(REAL_CAPITAL.realized_pnl || 0).toLocaleString("en-IN", {maximumFractionDigits:0})}.`;
+  document.getElementById("ft-foot").textContent =
+    `${trades.length} trade${trades.length === 1 ? "" : "s"} logged total -- manually reported, no live price feed.`;
 
-  const closedWrap = document.getElementById("rc-closed-wrap");
-  const closed = REAL_CAPITAL.closed_positions || [];
+  const closedWrap = document.getElementById("ft-closed-wrap");
   if (!closed.length) {
     closedWrap.style.display = "none";
   } else {
     closedWrap.style.display = "";
-    document.getElementById("rc-closed-tbody").innerHTML = closed.slice().reverse().map(p => {
-      const cls = p.pnl >= 0 ? "pos" : "neg";
-      return `<tr data-symbol="${p.symbol}">
-        <td class="t-sym">${symLink(p.symbol, p.symbol)}</td>
-        <td>${fmtRs(p.entry)}</td>
-        <td>${fmtRs(p.exit)}</td>
-        <td>${fmtDate(p.exit_date)}</td>
-        <td>${p.shares}</td>
-        <td class="t-pnl ${cls}">${fmtPnlRs(p.pnl)}<div class="t-pnl-rs">${p.pnl_pct >= 0 ? "+" : ""}${p.pnl_pct}%</div></td>
+    document.getElementById("ft-closed-tbody").innerHTML = closed.slice().reverse().map(t => {
+      const cls = t.pnl_pct >= 0 ? "pos" : "neg";
+      return `<tr>
+        <td class="t-sym">${t.symbol}</td>
+        <td>${t.strategy}</td>
+        <td>${dirChip(t.direction)}</td>
+        <td>${fmtNum(t.entry_price)}</td>
+        <td>${fmtNum(t.exit_price)}</td>
+        <td class="mono" style="font-size:12px">${fmtFTDateTime(t.exit_date)}</td>
+        <td class="t-pnl ${cls}">${t.pnl_pct >= 0 ? "+" : ""}${t.pnl_pct}%</td>
       </tr>`;
     }).join("");
   }
@@ -2752,7 +2747,7 @@ renderFresh();
 renderWatchlist();
 renderCandleSignals();
 renderInvestable();
-renderRealCapital();
+renderForwardTest();
 renderTicker();
 
 // ---- masthead stats: real numbers pulled from HISTORY, not placeholders ----
