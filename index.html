@@ -599,6 +599,13 @@
   .t-status.RISK_TOP5 { color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 10%, transparent); }
   .t-status.REST { color: var(--text-lo); background: var(--panel-2); }
 
+  /* ---------- forward-test direction chips (long/short) -- own dedicated classes, not borrowed
+     from .OPEN/.STOPPED_OUT (position-state colors that happen to render the same green/red but
+     mean something unrelated -- decoupled so one can change without silently breaking the other).
+     Conventional trading-UI mapping: long = green, short = red. ---------- */
+  .t-status.LONG { color: var(--good); background: var(--good-bg); }
+  .t-status.SHORT { color: var(--bad); background: var(--bad-bg); }
+
   /* ---------- all-scanned-stocks table ---------- */
   .ascan-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
   .ascan-search {
@@ -2263,7 +2270,7 @@ function renderForwardTest() {
     avgPnlStat.style.color = "";
   }
 
-  const dirChip = (dir) => `<span class="t-status ${dir === "long" ? "OPEN" : "STOPPED_OUT"}">${dir === "long" ? "Long" : "Short"}</span>`;
+  const dirChip = (dir) => `<span class="t-status ${dir === "long" ? "LONG" : "SHORT"}">${dir === "long" ? "Long" : "Short"}</span>`;
 
   document.getElementById("ft-open-tbody").innerHTML = open.slice().reverse().map(t => {
     const hasLive = t.current_price != null;
