@@ -594,18 +594,6 @@
   .t-status.STOPPED_OUT { color: var(--bad); background: var(--bad-bg); }
   .alloc-foot { margin-top: 14px; font-size: 11px; color: var(--text-faint); position: relative; }
 
-  /* ---------- forward-test cohort chips (rs_top5 / risk_top5 / rest curation comparison) ---------- */
-  .t-status.RS_TOP5 { color: var(--accent); background: var(--accent-bg); }
-  .t-status.RISK_TOP5 { color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 10%, transparent); }
-  .t-status.REST { color: var(--text-lo); background: var(--panel-2); }
-
-  /* ---------- forward-test direction chips (long/short) -- own dedicated classes, not borrowed
-     from .OPEN/.STOPPED_OUT (position-state colors that happen to render the same green/red but
-     mean something unrelated -- decoupled so one can change without silently breaking the other).
-     Conventional trading-UI mapping: long = green, short = red. ---------- */
-  .t-status.LONG { color: var(--good); background: var(--good-bg); }
-  .t-status.SHORT { color: var(--bad); background: var(--bad-bg); }
-
   /* ---------- all-scanned-stocks table ---------- */
   .ascan-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
   .ascan-search {
@@ -1009,7 +997,6 @@
       <button class="tabbtn" data-tab="positions">Positions</button>
       <button class="tabbtn" data-tab="watchlist">Watchlist</button>
       <button class="tabbtn" data-tab="investable">Investable</button>
-      <button class="tabbtn" data-tab="forwardtest">Forward Test</button>
       <button class="tabbtn" data-tab="allscan">All Scanned</button>
       <button class="tabbtn" data-tab="trackrecord">Track Record</button>
       <button class="tabbtn" data-tab="candlesignals">Candle Signals</button>
@@ -1356,74 +1343,6 @@
     </section>
   </div>
 
-  <!-- ================= FORWARD TEST TAB ================= -->
-
-  <div class="tab-panel" data-panel="forwardtest" hidden>
-
-    <header class="top">
-      <div>
-        <p class="brand-eyebrow"><span class="dot"></span>Live-Priced via Dhan &middot; Cohort-Tagged<span class="cursor"></span></p>
-        <h1>Forward <span class="accent">Test</span></h1>
-        <p class="brand-sub">Strategies being forward-tested outside COIL's own VCP/Trend Template pipeline &mdash; e.g. the "We Keep It Simple and Clean" loose trend-following setup (near-52wk-high strength, base/rectangle/trendline patterns, 10/21 EMA trail, ~70-90 day average hold; see <code class="mono">slide_scanner.py</code>). Candidates are auto-flagged and live-priced via Dhan when the symbol is NSE-listed; exit is always reported by hand via <code class="mono">forward_test.py</code> &mdash; this tab never sizes or executes a trade on its own. Not investment advice.</p>
-      </div>
-    </header>
-
-    <section class="block" id="forwardtest-empty-note-section" style="display:none;">
-      <h2>Forward Test</h2>
-      <p class="empty-note">No forward-test trades logged yet &mdash; run <code class="mono">python slide_scanner.py</code> or call <code class="mono">forward_test.open_trade()</code> directly to log the first one.</p>
-    </section>
-
-    <section class="block" id="forwardtest-table-section">
-      <h2>Forward Test</h2>
-
-      <div class="stat-row" style="margin-bottom: 20px;">
-        <div class="stat"><div class="num accent tab-nums" id="ft-stat-open">&mdash;</div><div class="lbl">Open trades</div></div>
-        <div class="stat"><div class="num tab-nums" id="ft-stat-closed">&mdash;</div><div class="lbl">Closed trades</div></div>
-        <div class="stat"><div class="num tab-nums" id="ft-stat-winrate">&mdash;</div><div class="lbl">Win rate</div></div>
-        <div class="stat"><div class="num tab-nums mono" id="ft-stat-avgpnl">&mdash;</div><div class="lbl">Avg closed P&amp;L</div></div>
-      </div>
-
-      <div class="alloc-wrap" id="ft-cohort-wrap" style="display:none; margin-bottom:24px;">
-        <h2 style="margin-bottom:4px; font-size:15px;">Cohort Comparison</h2>
-        <p style="margin:0 0 12px; font-size:12px; color:var(--text-faint);">Each scan run tags its own candidates into three non-overlapping groups to check whether curating actually beats just taking every candidate the screen passes &mdash; see wiki/strategies/slide-loose-ruleset.md.</p>
-        <div class="alloc-table-wrap">
-          <table class="alloc-table">
-            <thead><tr>
-              <th>Cohort</th><th>N</th><th>Open</th><th>Closed</th><th>Mean P&amp;L</th><th>Median P&amp;L</th><th>Win rate</th>
-            </tr></thead>
-            <tbody id="ft-cohort-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="alloc-wrap">
-        <h2 style="margin-bottom:12px; font-size:15px;">Open</h2>
-        <div class="alloc-table-wrap">
-          <table class="alloc-table">
-            <thead><tr>
-              <th>Symbol</th><th>Strategy</th><th>Cohort</th><th>Dir</th><th>Entered</th><th>Entry</th><th>Stop</th><th>Target</th><th>Live</th><th>P&amp;L</th><th>Notes</th>
-            </tr></thead>
-            <tbody id="ft-open-tbody"></tbody>
-          </table>
-        </div>
-        <p class="alloc-foot" id="ft-foot"></p>
-      </div>
-      <div id="ft-closed-wrap" style="display:none; margin-top:24px;">
-        <h2 style="margin-bottom:12px;">Closed</h2>
-        <div class="alloc-wrap">
-          <div class="alloc-table-wrap">
-            <table class="alloc-table">
-              <thead><tr>
-                <th>Symbol</th><th>Strategy</th><th>Cohort</th><th>Dir</th><th>Entry</th><th>Exit</th><th>Exit date</th><th>P&amp;L</th>
-              </tr></thead>
-              <tbody id="ft-closed-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
   <!-- ================= SHARED FOOTER: scope + consolidated methodology, all tabs ================= -->
   <footer class="site-footer">
     <div class="masthead-scope">
@@ -1503,7 +1422,6 @@ const CHART_DATA = {"LUPIN": {"bars": [{"o": 2215.0, "h": 2230.3, "l": 2198.1, "
 const WATCHLIST = {"entries": [{"symbol": "ACMESOLAR", "date_added": "2026-08-01", "entry_price": 362.6, "sector_label": "NIFTY ENERGY", "eps_growth": 72.0, "rev_growth": 47.0, "rs_pct": 82.3, "current_price": 458.65, "pnl_pct": 26.49}, {"symbol": "AEGISLOG", "date_added": "2026-08-01", "entry_price": 1280.8, "sector_label": "NIFTY OIL AND GAS", "eps_growth": 46.0, "rev_growth": 52.0, "rs_pct": 95.1, "current_price": 1424.5, "pnl_pct": 11.22}, {"symbol": "ANANDRATHI", "date_added": "2026-08-01", "entry_price": 2073.7, "sector_label": "NIFTY FINSEREXBNK", "eps_growth": 71.0, "rev_growth": 52.0, "rs_pct": 92.7, "current_price": 2179, "pnl_pct": 5.08}, {"symbol": "ASTERDM", "date_added": "2026-08-01", "entry_price": 822.15, "sector_label": "NIFTY MIDSML HLTH", "eps_growth": 72.0, "rev_growth": 18.0, "rs_pct": 86.5, "current_price": 750.7, "pnl_pct": -8.69}, {"symbol": "CAPLIPOINT", "date_added": "2026-08-01", "entry_price": 2516.8, "sector_label": "NIFTY PHARMA", "eps_growth": 19.0, "rev_growth": 19.0, "rs_pct": 76.4, "current_price": 2777.3, "pnl_pct": 10.35}, {"symbol": "GLAND", "date_added": "2026-08-01", "entry_price": 2502.9, "sector_label": "NIFTY PHARMA", "eps_growth": 96.0, "rev_growth": 22.0, "rs_pct": 79.5, "current_price": 2916.6, "pnl_pct": 16.53}, {"symbol": "HSCL", "date_added": "2026-08-01", "entry_price": 750.65, "sector_label": "NIFTY COMMODITIES", "eps_growth": 25.0, "rev_growth": 28.0, "rs_pct": 89.4, "current_price": 669.45, "pnl_pct": -10.82}, {"symbol": "NUVAMA", "date_added": "2026-08-01", "entry_price": 1803.8, "sector_label": "NIFTY FINSEREXBNK", "eps_growth": 16.0, "rev_growth": 22.0, "rs_pct": 74.0, "current_price": 1675.7, "pnl_pct": -7.1}, {"symbol": "VIJAYA", "date_added": "2026-08-01", "entry_price": 1344.4, "sector_label": "NIFTY MIDSML HLTH", "eps_growth": 38.0, "rev_growth": 27.0, "rs_pct": 76.1, "current_price": 1516, "pnl_pct": 12.76}, {"symbol": "ABCAPITAL", "date_added": "2026-08-01", "entry_price": 404.3, "sector_label": "NIFTY FINSEREXBNK", "eps_growth": 39.0, "rev_growth": 31.0, "rs_pct": 90.9, "current_price": 397, "pnl_pct": -1.81}, {"symbol": "FEDERALBNK", "date_added": "2026-08-01", "entry_price": 358.85, "sector_label": "NIFTY PVT BANK", "eps_growth": 33.0, "rev_growth": 21.0, "rs_pct": 94.8, "current_price": 327, "pnl_pct": -8.88}, {"symbol": "LUPIN", "date_added": "2026-08-01", "entry_price": 2415, "sector_label": "NIFTY PHARMA", "eps_growth": 89.0, "rev_growth": 32.0, "rs_pct": 80.3, "current_price": 2135, "pnl_pct": -11.59}, {"symbol": "AVALON", "date_added": "2026-08-03", "entry_price": 1751.8, "sector_label": "NIFTYIT", "eps_growth": 69.0, "rev_growth": 40.0, "rs_pct": 97.7, "current_price": 2468.5, "pnl_pct": 40.91}, {"symbol": "AZAD", "date_added": "2026-08-03", "entry_price": 2306.8, "sector_label": "NIFTYINFRA", "eps_growth": 34.0, "rev_growth": 27.0, "rs_pct": 88.1, "current_price": 2776.2, "pnl_pct": 20.35}, {"symbol": "IMFA", "date_added": "2026-08-03", "entry_price": 1492, "sector_label": "NIFTY METAL", "eps_growth": 118.0, "rev_growth": 35.0, "rs_pct": 96.4, "current_price": 1252.8, "pnl_pct": -16.03}, {"symbol": "JAMNAAUTO", "date_added": "2026-08-03", "entry_price": 140.86, "sector_label": "NIFTY AUTO", "eps_growth": 73.0, "rev_growth": 32.0, "rs_pct": 84.9, "current_price": 127.99, "pnl_pct": -9.14}, {"symbol": "KTKBANK", "date_added": "2026-08-03", "entry_price": 289.45, "sector_label": "NIFTY PVT BANK", "eps_growth": 43.0, "rev_growth": 26.0, "rs_pct": 90.1, "current_price": 331.5, "pnl_pct": 14.53}, {"symbol": "LLOYDSENGG", "date_added": "2026-08-03", "entry_price": 91.84, "sector_label": "NIFTYINFRA", "eps_growth": 112.0, "rev_growth": 113.0, "rs_pct": 73.9, "current_price": 85.73, "pnl_pct": -6.65}, {"symbol": "PRIVISCL", "date_added": "2026-08-03", "entry_price": 3597, "sector_label": "NIFTY COMMODITIES", "eps_growth": 36.0, "rev_growth": 19.0, "rs_pct": 89.1, "current_price": 3515.2, "pnl_pct": -2.27}, {"symbol": "SANSERA", "date_added": "2026-08-03", "entry_price": 3452.7, "sector_label": "NIFTY AUTO", "eps_growth": 104.0, "rev_growth": 28.0, "rs_pct": 98.7, "current_price": 4586.5, "pnl_pct": 32.84}, {"symbol": "CRAFTSMAN", "date_added": "2026-08-05", "entry_price": 10175.0, "sector_label": "NIFTY AUTO", "eps_growth": 113.3, "rev_growth": 36.3, "rs_pct": 91.4, "current_price": 10602, "pnl_pct": 4.2}, {"symbol": "AUBANK", "date_added": "2026-08-05", "entry_price": 1059.0, "sector_label": "NIFTY PVT BANK", "eps_growth": 35.1, "rev_growth": 29.8, "rs_pct": 87.8, "current_price": 1036.4, "pnl_pct": -2.13}, {"symbol": "AJANTPHARM", "date_added": "2026-08-05", "entry_price": 3525.1, "sector_label": "NIFTY PHARMA", "eps_growth": 30.8, "rev_growth": 24.8, "rs_pct": 77.1, "current_price": 3519.3, "pnl_pct": -0.16}, {"symbol": "ASTRAMICRO", "date_added": "2026-08-05", "entry_price": 1835.4, "sector_label": "NIFTYIT", "eps_growth": 43.9, "rev_growth": 19.7, "rs_pct": 95.3, "current_price": 1616.3, "pnl_pct": -11.94}, {"symbol": "PARAS", "date_added": "2026-08-05", "entry_price": 1300.3, "sector_label": "NIFTYINFRA", "eps_growth": 74.6, "rev_growth": 57.9, "rs_pct": 94.5, "current_price": 1375.5, "pnl_pct": 5.78}, {"symbol": "SKYGOLD", "date_added": "2026-08-05", "entry_price": 675.5, "sector_label": "NIFTY CONSUMPTION", "eps_growth": 111.9, "rev_growth": 80.6, "rs_pct": 97.7, "current_price": 802.55, "pnl_pct": 18.81}, {"symbol": "JAYNECOIND", "date_added": "2026-08-13", "entry_price": 90.67, "sector_label": "NIFTY METAL", "eps_growth": 108.3, "rev_growth": 27.7, "rs_pct": 90.5, "current_price": 90.28, "pnl_pct": -0.43}, {"symbol": "KARURVYSYA", "date_added": "2026-08-15", "entry_price": 331.75, "sector_label": "NIFTY PVT BANK", "eps_growth": 45.0, "rev_growth": 26.0, "rs_pct": 86.8, "current_price": 320.15, "pnl_pct": -3.5}, {"symbol": "HEG", "date_added": "2026-08-18", "entry_price": 698.3, "sector_label": "NIFTYINFRA", "eps_growth": 16.8, "rev_growth": 10.4, "rs_pct": 78.8, "current_price": 232.9, "pnl_pct": -66.65}, {"symbol": "TMB", "date_added": "2026-08-18", "entry_price": 843.7, "sector_label": "NIFTY PVT BANK", "eps_growth": 35.0, "rev_growth": 18.3, "rs_pct": 95.1, "current_price": 883.75, "pnl_pct": 4.75}, {"symbol": "RADICO", "date_added": "2026-08-20", "entry_price": 4696.0, "sector_label": "NIFTY FMCG", "eps_growth": 62.1, "rev_growth": 19.5, "rs_pct": 89.5, "current_price": 4448.8, "pnl_pct": -5.26}, {"symbol": "DCBBANK", "date_added": "2026-08-21", "entry_price": 188.61, "sector_label": "NIFTY PVT BANK", "eps_growth": 32.4, "rev_growth": 17.4, "rs_pct": 87.1, "current_price": 218.58, "pnl_pct": 15.89}, {"symbol": "MSTCLTD", "date_added": "2026-08-26", "entry_price": 727.95, "sector_label": "NIFTYINFRA", "eps_growth": 37.6, "rev_growth": 21.7, "rs_pct": 88.0, "current_price": 746.95, "pnl_pct": 2.61}, {"symbol": "MAHABANK", "date_added": "2026-08-27", "entry_price": 85.6, "sector_label": "NIFTY PVT BANK", "eps_growth": 34.2, "rev_growth": 21.8, "rs_pct": 87.5, "current_price": 82.4, "pnl_pct": -3.74}, {"symbol": "SHAILY", "date_added": "2026-09-01", "entry_price": 3272.3, "sector_label": "NIFTY COMMODITIES", "eps_growth": 16.7, "rev_growth": 13.8, "rs_pct": 86.5, "current_price": 3168.8, "pnl_pct": -3.16}, {"symbol": "GABRIEL", "date_added": "2026-09-02", "entry_price": 1426.3, "sector_label": "NIFTY AUTO", "eps_growth": 40.6, "rev_growth": 29.8, "rs_pct": 73.5, "current_price": 1471.4, "pnl_pct": 3.16}, {"symbol": "LUMAXTECH", "date_added": "2026-09-04", "entry_price": 1985.4, "sector_label": "NIFTY AUTO", "eps_growth": 109.0, "rev_growth": 32.9, "rs_pct": 90.0, "current_price": 2116.4, "pnl_pct": 6.6}, {"symbol": "APARINDS", "date_added": "2026-09-07", "entry_price": 17421.0, "sector_label": "NIFTYINFRA", "eps_growth": 77.4, "rev_growth": 29.1, "rs_pct": 96.6, "current_price": 18233, "pnl_pct": 4.66}, {"symbol": "FLUOROCHEM", "date_added": "2026-09-07", "entry_price": 4554.0, "sector_label": "NIFTY COMMODITIES", "eps_growth": 20.4, "rev_growth": 24.0, "rs_pct": 76.5, "current_price": 4487.2, "pnl_pct": -1.47}, {"symbol": "AUROPHARMA", "date_added": "2026-09-08", "entry_price": 1660.0, "sector_label": "NIFTY PHARMA", "eps_growth": 25.8, "rev_growth": 16.3, "rs_pct": 88.8, "current_price": 1700, "pnl_pct": 2.41}, {"symbol": "MANORAMA", "date_added": "2026-09-09", "entry_price": 2132.9, "sector_label": "NIFTY FMCG", "eps_growth": 67.8, "rev_growth": 39.5, "rs_pct": 88.3, "current_price": 1911, "pnl_pct": -10.4}, {"symbol": "OFSS", "date_added": "2026-09-16", "entry_price": 11803.0, "sector_label": "NIFTYIT", "eps_growth": 120.2, "rev_growth": 68.7, "rs_pct": 82.8, "current_price": 10989, "pnl_pct": -6.9}, {"symbol": "GVT&D", "date_added": "2026-09-22", "entry_price": 4366.1, "sector_label": "NIFTYINFRA", "eps_growth": 24.7, "rev_growth": 38.0, "rs_pct": 88.0, "current_price": 4348, "pnl_pct": -0.41}]};
 const CANDLE_SIGNALS = {"entries": [{"symbol": "SBIN", "signal_date": "2026-08-27", "pattern": "engulfing", "direction": "short", "signal_close": 1042.9, "stop": 1054.4, "current_price": 987, "pnl_pct": 5.36}, {"symbol": "BAJFINANCE", "signal_date": "2026-08-27", "pattern": "engulfing", "direction": "short", "signal_close": 1083.0, "stop": 1107.0, "current_price": 1008.8, "pnl_pct": 6.85}, {"symbol": "AXISBANK", "signal_date": "2026-08-28", "pattern": "engulfing", "direction": "long", "signal_close": 1265.0, "stop": 1248.2, "current_price": 1242.7, "pnl_pct": -1.76}, {"symbol": "HDFCBANK", "signal_date": "2026-09-01", "pattern": "engulfing", "direction": "short", "signal_close": 709.0, "stop": 739.75, "current_price": 738.6, "pnl_pct": -4.17}, {"symbol": "ICICIBANK", "signal_date": "2026-09-01", "pattern": "engulfing", "direction": "long", "signal_close": 1454.0, "stop": 1419.0, "current_price": 1339.6, "pnl_pct": -7.87}, {"symbol": "KOTAKBANK", "signal_date": "2026-09-01", "pattern": "shooting_star", "direction": "short", "signal_close": 419.4, "stop": 425.05, "current_price": 412.65, "pnl_pct": 1.61}, {"symbol": "LT", "signal_date": "2026-09-01", "pattern": "hammer", "direction": "long", "signal_close": 4044.9, "stop": 3976.0, "current_price": 3866.4, "pnl_pct": -4.41}, {"symbol": "MARUTI", "signal_date": "2026-09-01", "pattern": "engulfing", "direction": "long", "signal_close": 13547.0, "stop": 13268.0, "current_price": 12190, "pnl_pct": -10.02}, {"symbol": "SUNPHARMA", "signal_date": "2026-09-01", "pattern": "engulfing", "direction": "long", "signal_close": 1984.8, "stop": 1905.0, "current_price": 1846.4, "pnl_pct": -6.97}]};
 const INVESTABLE = {"entries": [{"symbol": "DCBBANK", "date_added": "2026-08-21", "entry_price": 188.61, "stop": 181.06, "stop_pct": 4.0, "recorded_at": "2026-08-21 23:14", "sector_label": "NIFTY PVT BANK", "eps_growth": 32.4, "rev_growth": 17.4, "rs_pct": 87.1, "current_price": 218.58, "pnl_pct": 15.89}, {"symbol": "MAHABANK", "date_added": "2026-08-27", "entry_price": 85.6, "stop": 75.66, "stop_pct": 11.61, "recorded_at": "2026-08-27 20:15", "sector_label": "NIFTY PVT BANK", "eps_growth": 34.2, "rev_growth": 21.8, "rs_pct": 87.5, "current_price": 82.4, "pnl_pct": -3.74}, {"symbol": "RADICO", "date_added": "2026-09-02", "entry_price": 4474.3, "stop": 3958.12, "stop_pct": 11.54, "recorded_at": "2026-09-02 16:43", "sector_label": "NIFTY FMCG", "eps_growth": 62.1, "rev_growth": 19.5, "rs_pct": 86.5, "current_price": 4448.8, "pnl_pct": -0.57}, {"symbol": "LUMAXTECH", "date_added": "2026-09-04", "entry_price": 1985.4, "stop": 1862.0, "stop_pct": 6.22, "recorded_at": "2026-09-04 10:45", "sector_label": "NIFTY AUTO", "eps_growth": 109.0, "rev_growth": 32.9, "rs_pct": 90.0, "current_price": 2116.4, "pnl_pct": 6.6}, {"symbol": "SHAILY", "date_added": "2026-09-04", "entry_price": 3267.1, "stop": 3005.73, "stop_pct": 8.0, "recorded_at": "2026-09-05 14:12", "sector_label": "NIFTY COMMODITIES", "eps_growth": 16.7, "rev_growth": 13.8, "rs_pct": 82.2, "current_price": 3168.8, "pnl_pct": -3.01}, {"symbol": "APARINDS", "date_added": "2026-09-07", "entry_price": 17421.0, "stop": 15875.02, "stop_pct": 8.87, "recorded_at": "2026-09-07 10:41", "sector_label": "NIFTYINFRA", "eps_growth": 77.4, "rev_growth": 29.1, "rs_pct": 96.6, "current_price": 18233, "pnl_pct": 4.66}, {"symbol": "AUROPHARMA", "date_added": "2026-09-08", "entry_price": 1660.0, "stop": 1566.82, "stop_pct": 5.61, "recorded_at": "2026-09-08 10:43", "sector_label": "NIFTY PHARMA", "eps_growth": 25.8, "rev_growth": 16.3, "rs_pct": 88.8, "current_price": 1700, "pnl_pct": 2.41}, {"symbol": "FLUOROCHEM", "date_added": "2026-09-09", "entry_price": 4676.6, "stop": 4257.71, "stop_pct": 8.96, "recorded_at": "2026-09-09 15:57", "sector_label": "NIFTY COMMODITIES", "eps_growth": 20.4, "rev_growth": 24.0, "rs_pct": 78.7, "current_price": 4487.2, "pnl_pct": -4.05}, {"symbol": "OFSS", "date_added": "2026-09-16", "entry_price": 11803.0, "stop": 11127.9, "stop_pct": 5.72, "recorded_at": "2026-09-16 15:03", "sector_label": "NIFTYIT", "eps_growth": 120.2, "rev_growth": 68.7, "rs_pct": 82.8, "current_price": 10989, "pnl_pct": -6.9}, {"symbol": "GVT&D", "date_added": "2026-09-22", "entry_price": 4366.1, "stop": 4016.81, "stop_pct": 8.0, "recorded_at": "2026-09-22 12:08", "sector_label": "NIFTYINFRA", "eps_growth": 24.7, "rev_growth": 38.0, "rs_pct": 88.0, "current_price": 4348, "pnl_pct": -0.41}]};
-const FORWARD_TEST = {"trades": [{"id": 1, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "ACMESOLAR", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 398.25, "stop": 337.81, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 79.7", "exit_date": null, "exit_price": null, "pnl_pct": 15.17, "cohort": "rest", "current_price": 458.65}, {"id": 2, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "ANANDRATHI", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 2198.3, "stop": 1811.04, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 88.0", "exit_date": null, "exit_price": null, "pnl_pct": -0.88, "cohort": "rest", "current_price": 2179}, {"id": 3, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "ASAHIINDIA", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 951.05, "stop": 813.6, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 61.4", "exit_date": null, "exit_price": null, "pnl_pct": 1.48, "cohort": "rest", "current_price": 965.15}, {"id": 4, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "BEML", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 2032.4, "stop": 1634.74, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 57.3", "exit_date": null, "exit_price": null, "pnl_pct": 3.17, "cohort": "rest", "current_price": 2096.8}, {"id": 5, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "CGCL", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 256.6, "stop": 210.94, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 79.1", "exit_date": null, "exit_price": null, "pnl_pct": 4.07, "cohort": "rest", "current_price": 267.05}, {"id": 6, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "CUB", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 230.61, "stop": 192.81, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 86.5", "exit_date": null, "exit_price": null, "pnl_pct": -1.47, "cohort": "rest", "current_price": 227.21}, {"id": 7, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "LALPATHLAB", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1916.1, "stop": 1577.9, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 66.2", "exit_date": null, "exit_price": null, "pnl_pct": -0.33, "cohort": "rest", "current_price": 1909.8}, {"id": 8, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "ELGIEQUIP", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 616.75, "stop": 554.09, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 73.1", "exit_date": null, "exit_price": null, "pnl_pct": -1.26, "cohort": "risk_top5", "current_price": 608.95}, {"id": 9, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "KAJARIACER", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1261.1, "stop": 1135.23, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 54.9", "exit_date": null, "exit_price": null, "pnl_pct": -6.15, "cohort": "risk_top5", "current_price": 1183.6}, {"id": 10, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "KPIL", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1410.5, "stop": 1233.04, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 63.0", "exit_date": null, "exit_price": null, "pnl_pct": -0.74, "cohort": "rest", "current_price": 1400.1}, {"id": 11, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "KARURVYSYA", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 346.6, "stop": 282.34, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 89.3", "exit_date": null, "exit_price": null, "pnl_pct": -7.63, "cohort": "rest", "current_price": 320.15}, {"id": 12, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "NAVINFLUOR", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 8542.5, "stop": 7143.22, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 92.7", "exit_date": null, "exit_price": null, "pnl_pct": -1.22, "cohort": "rest", "current_price": 8438}, {"id": 13, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "RBLBANK", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 389.4, "stop": 340.89, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 86.7", "exit_date": null, "exit_price": null, "pnl_pct": 8.68, "cohort": "rest", "current_price": 423.2}, {"id": 14, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "SHYAMMETL", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1072.6, "stop": 897.78, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 67.7", "exit_date": null, "exit_price": null, "pnl_pct": 2.0, "cohort": "rest", "current_price": 1094.1}, {"id": 15, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "TBOTEK", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1700.0, "stop": 1372.1, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 71.3", "exit_date": null, "exit_price": null, "pnl_pct": 0.22, "cohort": "rest", "current_price": 1703.7}, {"id": 16, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "VIJAYA", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1481.1, "stop": 1254.5, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 84.3", "exit_date": null, "exit_price": null, "pnl_pct": 2.36, "cohort": "rest", "current_price": 1516}, {"id": 17, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "360ONE", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1181.3, "stop": 1039.39, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 64.3", "exit_date": null, "exit_price": null, "pnl_pct": -9.13, "cohort": "rest", "current_price": 1073.5}, {"id": 18, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "AUROPHARMA", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1648.2, "stop": 1481.76, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 88.6", "exit_date": null, "exit_price": null, "pnl_pct": 3.14, "cohort": "risk_top5", "current_price": 1700}, {"id": 19, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "BHEL", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 427.5, "stop": 364.36, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 95.3", "exit_date": null, "exit_price": null, "pnl_pct": -0.4, "cohort": "rs_top5", "current_price": 425.8}, {"id": 20, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "NYKAA", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 337.4, "stop": 294.15, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 82.0", "exit_date": null, "exit_price": null, "pnl_pct": -1.14, "cohort": "rest", "current_price": 333.55}, {"id": 21, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "FEDERALBNK", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 353.35, "stop": 311.84, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 92.9", "exit_date": null, "exit_price": null, "pnl_pct": -7.46, "cohort": "rs_top5", "current_price": 327}, {"id": 22, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "GLENMARK", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 2460.0, "stop": 2099.94, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 72.2", "exit_date": null, "exit_price": null, "pnl_pct": 0.06, "cohort": "rest", "current_price": 2461.4}, {"id": 23, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "MEDANTA", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1444.9, "stop": 1268.61, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 54.7", "exit_date": null, "exit_price": null, "pnl_pct": 2.97, "cohort": "rest", "current_price": 1487.8}, {"id": 24, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "IDFCFIRSTB", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 85.09, "stop": 75.92, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 71.1", "exit_date": null, "exit_price": null, "pnl_pct": 0.33, "cohort": "rest", "current_price": 85.37}, {"id": 25, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "INDIANB", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 878.8, "stop": 753.87, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 77.1", "exit_date": null, "exit_price": null, "pnl_pct": -4.32, "cohort": "rest", "current_price": 840.8}, {"id": 26, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "IPCALAB", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1956.5, "stop": 1570.55, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 78.6", "exit_date": null, "exit_price": null, "pnl_pct": 1.83, "cohort": "rest", "current_price": 1992.4}, {"id": 27, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "NMDC", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 85.75, "stop": 79.43, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 70.9", "exit_date": null, "exit_price": null, "pnl_pct": -6.47, "cohort": "risk_top5", "current_price": 80.2}, {"id": 28, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "OBEROIRLTY", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1866.0, "stop": 1659.43, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 66.1", "exit_date": null, "exit_price": null, "pnl_pct": -1.09, "cohort": "rest", "current_price": 1845.6}, {"id": 29, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "OIL", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 498.15, "stop": 396.02, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 73.2", "exit_date": null, "exit_price": null, "pnl_pct": -6.25, "cohort": "rest", "current_price": 467}, {"id": 30, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "POLICYBZR", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1851.9, "stop": 1472.06, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 54.1", "exit_date": null, "exit_price": null, "pnl_pct": -2.53, "cohort": "rest", "current_price": 1805}, {"id": 31, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "PETRONET", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 289.2, "stop": 262.0, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 58.0", "exit_date": null, "exit_price": null, "pnl_pct": -2.58, "cohort": "risk_top5", "current_price": 281.75}, {"id": 32, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "NIACL", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 199.11, "stop": 158.52, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 55.2", "exit_date": null, "exit_price": null, "pnl_pct": -5.88, "cohort": "rest", "current_price": 187.41}, {"id": 33, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "IDEA", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 14.53, "stop": 12.35, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 96.6", "exit_date": null, "exit_price": null, "pnl_pct": -1.79, "cohort": "rs_top5", "current_price": 14.27}, {"id": 34, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "ARVIND", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 574.05, "stop": 494.85, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 95.1", "exit_date": null, "exit_price": null, "pnl_pct": -7.06, "cohort": "rs_top5", "current_price": 533.55}, {"id": 35, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "AGARWALEYE", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 514.25, "stop": 453.74, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 67.4", "exit_date": null, "exit_price": null, "pnl_pct": -4.12, "cohort": "rest", "current_price": 493.05}, {"id": 36, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "EDELWEISS", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 126.18, "stop": 111.08, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 65.1", "exit_date": null, "exit_price": null, "pnl_pct": 11.87, "cohort": "rest", "current_price": 141.16}, {"id": 37, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "FEDFINA", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 157.57, "stop": 141.44, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 67.2", "exit_date": null, "exit_price": null, "pnl_pct": -3.45, "cohort": "rest", "current_price": 152.14}, {"id": 38, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "GRWRHITECH", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 7202.5, "stop": 6427.33, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 98.4", "exit_date": null, "exit_price": null, "pnl_pct": -11.61, "cohort": "rs_top5", "current_price": 6366.5}, {"id": 39, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "INDIGOPNTS", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 1171.0, "stop": 976.08, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 58.3", "exit_date": null, "exit_price": null, "pnl_pct": -2.48, "cohort": "rest", "current_price": 1142}, {"id": 40, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "MAHSEAMLES", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 665.05, "stop": 546.06, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 52.1", "exit_date": null, "exit_price": null, "pnl_pct": 4.86, "cohort": "rest", "current_price": 697.35}, {"id": 41, "strategy": "Slide Loose Ruleset (backtested 2026-09-03)", "symbol": "METROPOLIS", "direction": "long", "status": "open", "entry_date": "2026-09-04T00:19", "entry_price": 582.2, "stop": 505.93, "target": null, "notes": "auto-flagged by slide_scanner.py, RS% 57.8", "exit_date": null, "exit_price": null, "pnl_pct": 1.75, "cohort": "rest", "current_price": 592.4}], "next_id": 42};
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -2154,169 +2072,6 @@ function renderFresh() {
   }
 }
 
-// Forward Test -- strategies traded outside COIL's own VCP/Trend Template pipeline (e.g. the
-// slide's loose trend-following setup, auto-flagged by slide_scanner.py). Open trades get live
-// Dhan pricing layered in at build time when the symbol resolves to an NSE security ID (see
-// build_dashboard.py's _load_forward_test_data()) -- same as Investable/Watchlist, sign-adjusted
-// for direction. A closed trade's pnl_pct is locked in at forward_test.close_trade() time and
-// never touched again. symLink() is safe here (unlike the tab's original gold-CFD framing) since
-// these are real NSE tickers with a working TradingView NSE: link.
-// Plain numeric formatter (no ₹) -- forward-tested instruments (e.g. gold CFD) aren't
-// necessarily rupee-denominated, unlike everything else on this dashboard.
-function fmtNum(v) { return v != null ? v.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"; }
-
-// forward_test.py logs full ISO timestamps ("2026-09-03T14:30"), not the bare YYYY-MM-DD dates
-// fmtDate() expects -- new Date() parses a full ISO string directly, no "T00:00:00" append.
-function fmtFTDateTime(iso) {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (isNaN(d)) return iso;
-  return d.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
-}
-
-// Cohort labels a scan run tags onto its own candidates (see slide_scanner.py's
-// assign_cohorts()/forward_test.py's open_trade() cohort kwarg) -- informational only, purely
-// for comparing curation rules against taking every candidate the screen passes. A trade with no
-// cohort (logged before this existed, or by a strategy that doesn't use it) renders with no chip.
-const COHORT_LABEL = { rs_top5: "RS Top 5", risk_top5: "Risk Top 5", rest: "Rest" };
-const COHORT_ORDER = ["rs_top5", "risk_top5", "rest"];
-function cohortChip(cohort) {
-  if (!cohort || !COHORT_LABEL[cohort]) return "—";
-  return `<span class="t-status ${cohort.toUpperCase()}">${COHORT_LABEL[cohort]}</span>`;
-}
-
-// Same grouping/stats analyze_cohort_performance.py computes standalone (mean/median pnl_pct,
-// win rate per cohort) -- duplicated in JS rather than shared since that script runs offline
-// against live Dhan pricing while this renders whatever pnl_pct build_dashboard.py already
-// baked into FORWARD_TEST (live for open, locked-in for closed). Only renders cohorts that
-// actually have members, same as the Python version.
-function renderCohortComparison(trades) {
-  const wrap = document.getElementById("ft-cohort-wrap");
-  const byCohort = {};
-  trades.forEach(t => {
-    const key = t.cohort;
-    if (!key || !COHORT_LABEL[key]) return;
-    (byCohort[key] = byCohort[key] || []).push(t);
-  });
-  const present = COHORT_ORDER.filter(k => byCohort[k] && byCohort[k].length);
-  if (!present.length) {
-    wrap.style.display = "none";
-    return;
-  }
-  wrap.style.display = "";
-  document.getElementById("ft-cohort-tbody").innerHTML = present.map(key => {
-    const rows = byCohort[key];
-    const priced = rows.filter(t => t.pnl_pct != null);
-    const openN = rows.filter(t => t.status === "open").length;
-    const closedN = rows.filter(t => t.status === "closed").length;
-    let mean = null, median = null, winRate = null;
-    if (priced.length) {
-      const returns = priced.map(t => t.pnl_pct).sort((a, b) => a - b);
-      mean = returns.reduce((s, r) => s + r, 0) / returns.length;
-      const mid = Math.floor(returns.length / 2);
-      median = returns.length % 2 ? returns[mid] : (returns[mid - 1] + returns[mid]) / 2;
-      winRate = returns.filter(r => r > 0).length / returns.length * 100;
-    }
-    const fmtPct = (v) => v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
-    const pnlCls = (v) => v == null ? "" : (v >= 0 ? "pos" : "neg");
-    return `<tr>
-      <td>${cohortChip(key)}</td>
-      <td class="mono">${rows.length}</td>
-      <td class="mono">${openN}</td>
-      <td class="mono">${closedN}</td>
-      <td class="t-pnl ${pnlCls(mean)}">${fmtPct(mean)}</td>
-      <td class="t-pnl ${pnlCls(median)}">${fmtPct(median)}</td>
-      <td class="mono">${winRate == null ? "—" : winRate.toFixed(1) + "%"}</td>
-    </tr>`;
-  }).join("");
-}
-
-function renderForwardTest() {
-  const emptySection = document.getElementById("forwardtest-empty-note-section");
-  const tableSection = document.getElementById("forwardtest-table-section");
-
-  const trades = (FORWARD_TEST && FORWARD_TEST.trades) || [];
-  if (!trades.length) {
-    emptySection.style.display = "";
-    tableSection.style.display = "none";
-    return;
-  }
-  emptySection.style.display = "none";
-  tableSection.style.display = "";
-
-  renderCohortComparison(trades);
-
-  const open = trades.filter(t => t.status === "open");
-  const closed = trades.filter(t => t.status === "closed");
-
-  document.getElementById("ft-stat-open").textContent = open.length;
-  document.getElementById("ft-stat-closed").textContent = closed.length;
-
-  const winRateStat = document.getElementById("ft-stat-winrate");
-  if (closed.length) {
-    const wins = closed.filter(t => t.pnl_pct >= 0).length;
-    winRateStat.textContent = `${Math.round(wins / closed.length * 100)}%`;
-  } else {
-    winRateStat.textContent = "—";
-  }
-
-  const avgPnlStat = document.getElementById("ft-stat-avgpnl");
-  if (closed.length) {
-    const avg = closed.reduce((sum, t) => sum + t.pnl_pct, 0) / closed.length;
-    avgPnlStat.style.color = avg >= 0 ? "var(--good)" : "var(--bad)";
-    avgPnlStat.textContent = `${avg >= 0 ? "+" : ""}${avg.toFixed(2)}%`;
-  } else {
-    avgPnlStat.textContent = "—";
-    avgPnlStat.style.color = "";
-  }
-
-  const dirChip = (dir) => `<span class="t-status ${dir === "long" ? "LONG" : "SHORT"}">${dir === "long" ? "Long" : "Short"}</span>`;
-
-  document.getElementById("ft-open-tbody").innerHTML = open.slice().reverse().map(t => {
-    const hasLive = t.current_price != null;
-    const liveText = hasLive ? fmtNum(t.current_price) : "—";
-    const pnlCls = hasLive ? (t.pnl_pct >= 0 ? "pos" : "neg") : "";
-    const pnlText = hasLive ? `${t.pnl_pct >= 0 ? "+" : ""}${t.pnl_pct}%` : "—";
-    return `<tr data-symbol="${t.symbol}">
-      <td class="t-sym">${symLink(t.symbol, t.symbol)}</td>
-      <td>${t.strategy}</td>
-      <td>${cohortChip(t.cohort)}</td>
-      <td>${dirChip(t.direction)}</td>
-      <td class="mono" style="font-size:12px">${fmtFTDateTime(t.entry_date)}</td>
-      <td>${fmtNum(t.entry_price)}</td>
-      <td style="color:var(--bad)">${fmtNum(t.stop)}</td>
-      <td>${t.target != null ? fmtNum(t.target) : "—"}</td>
-      <td>${liveText}</td>
-      <td class="t-pnl ${pnlCls}">${pnlText}</td>
-      <td style="font-size:12px; color:var(--muted)">${t.notes || "—"}</td>
-    </tr>`;
-  }).join("");
-  staggerIndex(document.getElementById("ft-open-tbody"));
-
-  document.getElementById("ft-foot").textContent =
-    `${trades.length} trade${trades.length === 1 ? "" : "s"} logged total -- live-priced via Dhan where the symbol is NSE-listed, exit always reported by hand.`;
-
-  const closedWrap = document.getElementById("ft-closed-wrap");
-  if (!closed.length) {
-    closedWrap.style.display = "none";
-  } else {
-    closedWrap.style.display = "";
-    document.getElementById("ft-closed-tbody").innerHTML = closed.slice().reverse().map(t => {
-      const cls = t.pnl_pct >= 0 ? "pos" : "neg";
-      return `<tr data-symbol="${t.symbol}">
-        <td class="t-sym">${symLink(t.symbol, t.symbol)}</td>
-        <td>${t.strategy}</td>
-        <td>${cohortChip(t.cohort)}</td>
-        <td>${dirChip(t.direction)}</td>
-        <td>${fmtNum(t.entry_price)}</td>
-        <td>${fmtNum(t.exit_price)}</td>
-        <td class="mono" style="font-size:12px">${fmtFTDateTime(t.exit_date)}</td>
-        <td class="t-pnl ${cls}">${t.pnl_pct >= 0 ? "+" : ""}${t.pnl_pct}%</td>
-      </tr>`;
-    }).join("");
-  }
-}
-
 // Permanent watchlist -- every symbol that ever cleared the strong-fundamentals +
 // positive-sector-alpha bar (see watchlist.py), whether or not it went on to get funded.
 // entry_price/date_added are locked forever; current_price/pnl_pct are live-refreshed on each
@@ -2840,7 +2595,6 @@ renderFresh();
 renderWatchlist();
 renderCandleSignals();
 renderInvestable();
-renderForwardTest();
 renderTicker();
 
 // ---- masthead stats: real numbers pulled from HISTORY, not placeholders ----
